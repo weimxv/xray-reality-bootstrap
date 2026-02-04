@@ -12,14 +12,13 @@ ui_read_timeout() {
     local default="$2"
     local timeout="$3"
 
-    _flush_stdin
     local input=""
     
     # 显示提示并等待输入（支持回车确认）
-    echo -ne "${YELLOW}${prompt} [默认: ${default}] [ ${RED}${timeout}s${YELLOW} ] : ${PLAIN}"
+    echo -e "${YELLOW}${prompt} [默认: ${default}] [ ${RED}${timeout}s${YELLOW} ] : ${PLAIN}"
     
     # 使用 read -t 等待整行输入
-    if read -t "$timeout" input; then
+    if read -t "$timeout" input </dev/tty; then
         # 用户输入了内容（可能是 y/n 或直接回车）
         input="${input:-$default}"
     else
@@ -27,7 +26,6 @@ ui_read_timeout() {
         input="$default"
     fi
     
-    echo ""
     echo "$input"
 }
 

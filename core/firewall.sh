@@ -14,19 +14,6 @@ NETWORK_ENV="$RUNTIME_DIR/network.env"
 FIREWALL_ENV="$RUNTIME_DIR/firewall.env"
 
 # -------------------------------
-# 基础检测
-# -------------------------------
-require_cmd() {
-    command -v "$1" >/dev/null 2>&1 || {
-        ui_err "缺少依赖命令: $1"
-        exit 1
-    }
-}
-
-require_cmd iptables
-require_cmd systemctl
-
-# -------------------------------
 # SSH 端口检测
 # -------------------------------
 detect_ssh_port() {
@@ -58,6 +45,17 @@ allow_port() {
 # 主流程
 # -------------------------------
 firewall_run() {
+
+    # 基础依赖检测（在运行时而不是加载时）
+    require_cmd() {
+        command -v "$1" >/dev/null 2>&1 || {
+            ui_err "缺少依赖命令: $1"
+            exit 1
+        }
+    }
+
+    require_cmd iptables
+    require_cmd systemctl
 
     if [[ ! -f "$NETWORK_ENV" ]]; then
         ui_err "未检测到 network.env，请先运行 network.sh"

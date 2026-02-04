@@ -15,7 +15,8 @@ ui_read_timeout() {
     local input=""
     
     # 显示提示并等待输入（支持回车确认）
-    echo -e "${YELLOW}${prompt} [默认: ${default}] [ ${RED}${timeout}s${YELLOW} ] : ${PLAIN}"
+    # 直接输出到 stderr 以避免被捕获
+    >&2 echo -e "${YELLOW}${prompt} [默认: ${default}] [ ${RED}${timeout}s${YELLOW} ] : ${PLAIN}"
     
     # 使用 read -t 等待整行输入
     if read -t "$timeout" input </dev/tty; then
@@ -26,6 +27,7 @@ ui_read_timeout() {
         input="$default"
     fi
     
+    # 返回结果到 stdout
     echo "$input"
 }
 

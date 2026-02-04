@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
-BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
-CORE_DIR="$BASE_DIR/core"
-TOOLS_DIR="$BASE_DIR/tools"
-RUNTIME_DIR="$BASE_DIR/runtime"
+# 导出全局路径变量，供所有模块使用
+export BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
+export CORE_DIR="$BASE_DIR/core"
+export TOOLS_DIR="$BASE_DIR/tools"
+export RUNTIME_DIR="$BASE_DIR/runtime"
+export UI_DIR="$BASE_DIR/ui"
 
 mkdir -p "$RUNTIME_DIR"
 

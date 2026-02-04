@@ -2,8 +2,11 @@
 
 set -e
 
-BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-UI_DIR="$BASE_DIR/ui"
+# 如果变量未定义，则计算（兼容独立运行）
+if [[ -z "$BASE_DIR" ]]; then
+    BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+    UI_DIR="$BASE_DIR/ui"
+fi
 
 source "$UI_DIR/color.sh"
 source "$UI_DIR/prompt.sh"

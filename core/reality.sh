@@ -31,7 +31,36 @@ gen_uuid() {
 }
 
 gen_keypair() {
-    "$XRAY_BIN" x25519
+    "$XRAY_BIN" x25519 2>/dev/null || true
+}
+
+# 从 x25519 输出解析私钥/公钥（兼容中英文及多行格式）
+parse_keypair() {
+    local keypair="$1"
+    local priv=""
+    local pub=""
+    # 英文: Private key: xxx / Public key: xxx
+    priv=$(echo "$keypair" | sed -n 's/.*[Pp]rivate key:\s*//p' | tr -d '\n\r ')
+    pub=$(echo "$keypair" | sed -n 's/.*[Pp]ublic key:\s*//p' | tr -d '\n\r ')
+    # 中文输出（私钥 / 公钥）
+    if [[ -z "$priv" ]]; then
+        priv=$(echo "$keypair" | sed -n 's/.*私钥:\s*//p' | tr -d '\n\r ')
+    fi
+    if [[ -z "$pub" ]]; then
+        pub=$(echo "$keypair" | sed -n 's/.*公钥:\s*//p' | tr -d '\n\r ')
+    fi
+    # 退路：按行取，前一行私钥、后一行公钥（常见为两行 base64）
+    if [[ -z "$priv" || -z "$pub" ]]; then
+        local line1 line2
+        line1=$(echo "$keypair" | sed -n '1p' | tr -d '\n\r ')
+        line2=$(echo "$keypair" | sed -n '2p' | tr -d '\n\r ')
+        if [[ -n "$line1" && -n "$line2" && ${#line1} -gt 20 && ${#line2} -gt 20 ]]; then
+            priv="${priv:-$line1}"
+            pub="${pub:-$line2}"
+        fi
+    fi
+    echo "$priv"
+    echo "$pub"
 }
 
 gen_short_id() {
@@ -193,37 +222,39 @@ reality_run() {
         done
     fi
 
-    # SNI
+    # SNI：默认使用测速推荐的最优域名，安装后可用 'sni' 命令修改
     local sni
     sni=$(select_sni)
-    if ui_confirm "使用推荐域名 $sni" 30 y; then
-        :
-    else
-        while true; do
-            sni=$(ui_read "请输入自定义 SNI 域名" "$sni")
-            if validate_domain "$sni"; then
-                break
-            else
-                ui_err "域名格式无效 [$sni]，请输入有效的域名"
-            fi
-        done
-    fi
+    ui_ok "将使用推荐 SNI: $sni（安装后可用 'sni' 命令修改）"
 
-    # 生成密钥
+    # 生成密钥（失败时自动重试一次，并兼容多种 Xray 输出格式）
     local uuid
     local keypair
     local private_key
     local public_key
     local short_id
+    local parsed
 
     uuid=$(gen_uuid)
-    keypair=$(gen_keypair) || true
-    # 解析密钥（避免 grep 无匹配时 set -e 导致脚本退出）
-    private_key=$(echo "$keypair" | sed -n 's/.*[Pp]rivate key:\s*//p' | tr -d '\n\r ')
-    public_key=$(echo "$keypair" | sed -n 's/.*[Pp]ublic key:\s*//p' | tr -d '\n\r ')
+    for attempt in 1 2; do
+        keypair=$(gen_keypair)
+        parsed=$(parse_keypair "$keypair")
+        private_key=$(echo "$parsed" | sed -n '1p')
+        public_key=$(echo "$parsed" | sed -n '2p')
+        if [[ -n "$private_key" && -n "$public_key" ]]; then
+            break
+        fi
+        [[ $attempt -eq 1 ]] && ui_warn "密钥解析未命中，重试一次..."
+    done
     if [[ -z "$private_key" || -z "$public_key" ]]; then
         ui_err "Xray 密钥生成或解析失败，请检查 Xray 版本与输出格式"
+        echo ""
+        echo "原始输出:"
         echo "$keypair" | head -5
+        echo ""
+        ui_info "重试方法: 重新执行安装（仅会重跑 Reality 与防火墙步骤）"
+        echo "  cd /opt/xray-reality-bootstrap && bash install.sh reality"
+        echo ""
         exit 1
     fi
     short_id=$(gen_short_id)

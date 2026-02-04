@@ -110,12 +110,12 @@ bash install.sh
 - **自定义**: 如 8443、2053 等
 
 #### SNI 域名
+脚本会自动测速并**默认使用**推荐的最优域名，无需输入。安装后可用 `sni` 命令修改。
 ```
-推荐 SNI: www.microsoft.com (23ms)
-使用推荐域名 www.microsoft.com (y/n) [默认: n] [ 10s ] :
+正在测速 SNI 域名...
+[OK] 推荐 SNI: www.microsoft.com (23ms)
+[OK] 将使用推荐 SNI: www.microsoft.com（安装后可用 'sni' 命令修改）
 ```
-
-**建议：** 接受推荐（已自动测速优选）
 
 ### 阶段 7: 防火墙配置
 
@@ -273,14 +273,21 @@ journalctl -u xray -n 50 --no-pager
 /usr/local/bin/xray run -test -config /usr/local/etc/xray/config.json
 ```
 
-### 3. 无法连接节点
+### 3. Reality 配置步骤报错（密钥生成或解析失败）
+
+**解决：** 仅重跑 Reality 与防火墙步骤，无需从头安装：
+```bash
+cd /opt/xray-reality-bootstrap && bash install.sh reality
+```
+
+### 4. 无法连接节点
 
 **检查清单：**
 1. 防火墙是否放行端口：`iptables -L -n | grep 443`
 2. 服务是否运行：`systemctl status xray`
 3. 客户端参数是否正确（UUID / PublicKey / SNI）
 
-### 4. SNI 握手失败
+### 5. SNI 握手失败
 
 **解决方案：**
 - 更换 SNI 域名（如 `www.apple.com`）

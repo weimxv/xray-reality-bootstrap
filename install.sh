@@ -26,6 +26,19 @@ source "$CORE_DIR/xray.sh"
 source "$CORE_DIR/reality.sh"
 
 # ---------------- Commands ----------------
+# 仅重跑 Reality 配置 + 防火墙 + 工具（密钥失败等可用来重试）
+cmd_reality() {
+    ui_phase 6 7 "Reality 配置"
+    reality_run
+    ui_phase 7 7 "防火墙配置与工具安装"
+    firewall_run
+    bash "$TOOLS_DIR/install_tools.sh"
+    echo ""
+    ui_ok "Reality 配置已完成"
+    ui_info "运行 'xinfo' 查看节点信息"
+    echo ""
+}
+
 cmd_install() {
     print_banner
     ui_warning
@@ -98,6 +111,7 @@ usage() {
     cat <<EOF
 用法:
   bash install.sh          - 全自动部署
+  bash install.sh reality  - 仅重跑 Reality 配置（密钥失败等可重试）
   bash install.sh info     - 查看节点信息
   bash install.sh remove   - 卸载 Xray
 
@@ -108,6 +122,7 @@ EOF
 # ---------------- Main ----------------
 case "${1:-install}" in
     install)   cmd_install ;;
+    reality)   cmd_reality ;;
     info)      cmd_info ;;
     remove|uninstall) cmd_uninstall ;;
     *)         usage ;;

@@ -88,7 +88,7 @@ check_systemd() {
 check_apt_lock() {
     if pgrep -x apt >/dev/null || pgrep -x apt-get >/dev/null || pgrep -x dpkg >/dev/null; then
         ui_warn "检测到 apt / dpkg 正在运行"
-        ui_confirm "是否等待并继续？" 15
+        ui_confirm "是否等待并继续" 30 y
     fi
 }
 

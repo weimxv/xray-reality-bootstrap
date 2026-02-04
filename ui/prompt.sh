@@ -34,7 +34,7 @@ ui_read_timeout() {
 # --- 确认（返回值优化）---
 ui_confirm() {
     local msg="$1"
-    local timeout="${2:-10}"
+    local timeout="${2:-30}"  # 默认 30 秒超时
     local default="${3:-n}"   # 第三个参数可指定默认值，默认 n
     local ans
     ans=$(ui_read_timeout "$msg (y/n)" "$default" "$timeout")

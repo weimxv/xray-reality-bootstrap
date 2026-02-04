@@ -89,7 +89,7 @@ kernel_run() {
         ui_info "当前拥塞控制算法: $CURRENT_CC"
 
         if [[ "$CURRENT_CC" != "bbr" ]]; then
-            if ui_confirm "是否启用 BBR 拥塞控制？" 10; then
+            if ui_confirm "是否启用 BBR 拥塞控制" 30 y; then
                 spinner_run "启用 BBR" enable_bbr
                 BBR_ENABLED=true
             else
@@ -113,7 +113,7 @@ kernel_run() {
             ui_ok "检测到 Swap 已存在"
             SWAP_ENABLED=true
         else
-            if ui_confirm "内存 < 2GB，是否创建 1GB Swap？" 12; then
+            if ui_confirm "内存 < 2GB，是否创建 1GB Swap" 30 y; then
                 spinner_run "创建 Swap" create_swap 1024
                 SWAP_ENABLED=true
             else

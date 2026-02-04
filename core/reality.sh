@@ -177,7 +177,7 @@ reality_run() {
 
     # 端口
     local port=443
-    if ui_confirm "使用默认端口 443" 8; then
+    if ui_confirm "使用默认端口 443" 30 y; then
         :
     else
         while true; do
@@ -185,7 +185,7 @@ reality_run() {
             if validate_port "$port"; then
                 break
             else
-                ui_err "端口无效，请输入 1-65535"
+                ui_err "端口无效 [$port]，请输入 1-65535 之间的数字"
             fi
         done
     fi
@@ -193,13 +193,15 @@ reality_run() {
     # SNI
     local sni
     sni=$(select_sni)
-    if ! ui_confirm "使用推荐域名 $sni" 10; then
+    if ui_confirm "使用推荐域名 $sni" 30 y; then
+        :
+    else
         while true; do
             sni=$(ui_read "请输入自定义 SNI 域名" "$sni")
             if validate_domain "$sni"; then
                 break
             else
-                ui_err "域名格式无效"
+                ui_err "域名格式无效 [$sni]，请输入有效的域名"
             fi
         done
     fi

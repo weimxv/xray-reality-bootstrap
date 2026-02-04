@@ -80,7 +80,8 @@ confirm_strategy() {
     ui_info "推荐网络策略: $DESC"
     ui_info "说明：此策略不会立即修改系统，仅作为后续模块依据"
 
-    if ui_confirm "是否接受该策略？" 12; then
+    # 默认接受推荐策略（y）
+    if ui_confirm "是否接受该策略" 30 y; then
         NET_STRATEGY="$RECOMMEND"
     else
         ui_warn "请选择网络策略："
@@ -89,13 +90,23 @@ confirm_strategy() {
         echo "  3) ipv6_only   - 仅 IPv6"
         echo
 
-        read -p "请输入选项 [1-3]: " choice
-        case "$choice" in
-            1) NET_STRATEGY="dual_stack" ;;
-            2) NET_STRATEGY="ipv4_only" ;;
-            3) NET_STRATEGY="ipv6_only" ;;
-            *) ui_err "无效输入"; exit 1 ;;
-        esac
+        # 循环直到输入有效
+        while true; do
+            read -t 30 -p "请输入选项 [1-3]: " choice </dev/tty || choice=""
+            case "$choice" in
+                1) NET_STRATEGY="dual_stack"; break ;;
+                2) NET_STRATEGY="ipv4_only"; break ;;
+                3) NET_STRATEGY="ipv6_only"; break ;;
+                "") 
+                    ui_warn "输入超时，使用推荐策略"
+                    NET_STRATEGY="$RECOMMEND"
+                    break
+                    ;;
+                *) 
+                    ui_err "无效输入 [$choice]，请输入 1-3 之间的数字"
+                    ;;
+            esac
+        done
     fi
 
     ui_ok "已确认网络策略: $NET_STRATEGY"

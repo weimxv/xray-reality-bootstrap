@@ -28,7 +28,8 @@ cmd_install() {
     print_banner
     ui_warning
 
-    if ! ui_confirm "继续部署" 15; then
+    # 默认 15 秒内按 y 或直接回车都视为“继续”，按 n 或输入其他再回车为“取消”
+    if ! ui_confirm "继续部署（按 y 继续，n 取消）" 15 y; then
         ui_warn "用户取消部署"
         exit 0
     fi

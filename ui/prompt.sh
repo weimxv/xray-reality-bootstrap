@@ -34,8 +34,9 @@ ui_read_timeout() {
 ui_confirm() {
     local msg="$1"
     local timeout="${2:-10}"
+    local default="${3:-n}"   # 第三个参数可指定默认值，默认 n
     local ans
-    ans=$(ui_read_timeout "$msg (y/n)" "n" "$timeout")
+    ans=$(ui_read_timeout "$msg (y/n)" "$default" "$timeout")
     [[ "$ans" =~ ^[yY]$ ]]
 }
 

@@ -32,7 +32,7 @@ cmd_install() {
 
     echo ""
     # 默认 y：直接回车或超时都会继续，输入 n 才取消
-    if ! ui_confirm "是否继续部署" 15 y; then
+    if ! ui_confirm "是否继续部署" 30 y; then
         ui_warn "用户取消部署"
         exit 0
     fi

@@ -217,9 +217,15 @@ reality_run() {
     local short_id
 
     uuid=$(gen_uuid)
-    keypair=$(gen_keypair)
-    private_key=$(echo "$keypair" | grep -oP 'Private key: \K.*')
-    public_key=$(echo "$keypair" | grep -oP 'Public key: \K.*')
+    keypair=$(gen_keypair) || true
+    # 解析密钥（避免 grep 无匹配时 set -e 导致脚本退出）
+    private_key=$(echo "$keypair" | sed -n 's/.*[Pp]rivate key:\s*//p' | tr -d '\n\r ')
+    public_key=$(echo "$keypair" | sed -n 's/.*[Pp]ublic key:\s*//p' | tr -d '\n\r ')
+    if [[ -z "$private_key" || -z "$public_key" ]]; then
+        ui_err "Xray 密钥生成或解析失败，请检查 Xray 版本与输出格式"
+        echo "$keypair" | head -5
+        exit 1
+    fi
     short_id=$(gen_short_id)
 
     # GeoData

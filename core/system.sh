@@ -75,7 +75,7 @@ setup_time() {
     tz=$(timedatectl show -p Timezone --value 2>/dev/null || echo "Unknown")
 
     ui_info "当前时区: $tz"
-    if ui_confirm "是否设置为 Asia/Shanghai" 30 y; then
+    if ui_confirm "是否设置为上海 (Asia/Shanghai)" 30 y; then
         spinner_run "设置时区" timedatectl set-timezone Asia/Shanghai
     fi
 

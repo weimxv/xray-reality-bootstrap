@@ -47,6 +47,8 @@ fi
 echo "[INFO] 正在下载脚本..."
 mkdir -p "$INSTALL_DIR"
 cd "$INSTALL_DIR"
+# 若为再次运行，先清空目录避免 mv 报错 "Directory not empty"
+find . -mindepth 1 -maxdepth 1 -exec rm -rf {} + 2>/dev/null || true
 
 if [[ "$DOWNLOADER" == "curl" ]]; then
     curl -fsSL -o main.zip "$ARCHIVE_URL"

@@ -13,12 +13,6 @@ source "$UI_DIR/spinner.sh"
 NETWORK_ENV="$RUNTIME_DIR/network.env"
 FIREWALL_ENV="$RUNTIME_DIR/firewall.env"
 
-if [[ ! -f "$NETWORK_ENV" ]]; then
-    ui_err "未检测到 network.env，请先运行 network.sh"
-    exit 1
-fi
-source "$NETWORK_ENV"
-
 # -------------------------------
 # 基础检测
 # -------------------------------
@@ -64,6 +58,12 @@ allow_port() {
 # 主流程
 # -------------------------------
 firewall_run() {
+
+    if [[ ! -f "$NETWORK_ENV" ]]; then
+        ui_err "未检测到 network.env，请先运行 network.sh"
+        exit 1
+    fi
+    source "$NETWORK_ENV"
 
     ui_info "配置基础防火墙规则（安全模式）"
     ui_info "当前 SSH 端口: $SSH_PORT"

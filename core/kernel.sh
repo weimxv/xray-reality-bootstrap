@@ -14,16 +14,6 @@ RUNTIME_FILE="$RUNTIME_DIR/kernel.env"
 NETWORK_ENV="$RUNTIME_DIR/network.env"
 
 # -------------------------------
-# 读取网络信息（仅用于展示）
-# -------------------------------
-if [[ -f "$NETWORK_ENV" ]]; then
-    source "$NETWORK_ENV"
-else
-    ui_err "未检测到 network.env，请先运行 network.sh"
-    exit 1
-fi
-
-# -------------------------------
 # BBR 检测
 # -------------------------------
 kernel_supports_bbr() {
@@ -81,6 +71,14 @@ create_swap() {
 # 主流程
 # -------------------------------
 kernel_run() {
+
+    # 读取网络信息（仅用于展示）
+    if [[ -f "$NETWORK_ENV" ]]; then
+        source "$NETWORK_ENV"
+    else
+        ui_err "未检测到 network.env，请先运行 network.sh"
+        exit 1
+    fi
 
     ui_info "当前网络策略: $NET_STRATEGY"
     ui_info "开始内核优化检查（安全模式）"

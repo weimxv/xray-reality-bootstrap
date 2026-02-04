@@ -101,6 +101,14 @@ xray-reality-bootstrap/
 在新 VPS 上以 root 执行一条命令即可，脚本会自动安装所需依赖并完成部署：
 
 ```bash
+# 方式 A：有 curl 时（多数系统已预装）
+bash <(curl -fsSL https://raw.githubusercontent.com/weimxv/xray-reality-bootstrap/main/bootstrap.sh)
+
+# 方式 B：没有 curl 但有 wget 时
+bash <(wget -qO- https://raw.githubusercontent.com/weimxv/xray-reality-bootstrap/main/bootstrap.sh)
+
+# 方式 C：curl 和 wget 都没有时，先装 curl 再执行
+apt update && apt install -y curl
 bash <(curl -fsSL https://raw.githubusercontent.com/weimxv/xray-reality-bootstrap/main/bootstrap.sh)
 ```
 

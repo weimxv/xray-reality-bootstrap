@@ -16,7 +16,12 @@
 在新 VPS 上以 root 执行即可，脚本会自动安装 curl/unzip 等依赖并完成部署：
 
 ```bash
+# 有 curl 时
 bash <(curl -fsSL https://raw.githubusercontent.com/weimxv/xray-reality-bootstrap/main/bootstrap.sh)
+
+# 没有 curl 时可用 wget，或先安装 curl：
+# apt update && apt install -y curl
+# bash <(curl -fsSL https://raw.githubusercontent.com/weimxv/xray-reality-bootstrap/main/bootstrap.sh)
 ```
 
 安装目录：`/opt/xray-reality-bootstrap`。

@@ -77,7 +77,8 @@ select_sni() {
         "www.cloudflare.com"
     )
 
-    ui_info "正在测速 SNI 域名..."
+    # 提示输出到 stderr，避免被 sni=$(select_sni) 捕获（否则会混入 ANSI 码写入 config 导致 Xray 解析失败）
+    ui_info "正在测速 SNI 域名..." >&2
     local best_domain=""
     local best_time=9999
 
@@ -95,7 +96,7 @@ select_sni() {
         best_domain="www.microsoft.com"
     fi
 
-    ui_ok "推荐 SNI: $best_domain (${best_time}ms)"
+    ui_ok "推荐 SNI: $best_domain (${best_time}ms)" >&2
     echo "$best_domain"
 }
 
@@ -129,6 +130,11 @@ install_geodata() {
     done
 }
 
+# 写入 JSON 前去除控制字符（避免 ANSI/终端码导致 invalid character '\x1b'）
+json_safe() {
+    echo -n "$1" | tr -d '\000-\037\177'
+}
+
 # -------------------------------
 # 生成配置
 # -------------------------------
@@ -139,6 +145,11 @@ generate_config() {
     local private_key="$4"
     local short_id="$5"
     local strategy="${NET_STRATEGY:-dual_stack}"
+
+    sni=$(json_safe "$sni")
+    uuid=$(json_safe "$uuid")
+    private_key=$(json_safe "$private_key")
+    short_id=$(json_safe "$short_id")
 
     # 策略映射
     local domain_strategy="AsIs"

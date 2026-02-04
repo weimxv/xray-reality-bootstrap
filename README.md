@@ -287,6 +287,10 @@ cd /opt/xray-reality-bootstrap && bash install.sh reality
 
 ### Xray 启动失败
 
+若日志出现 `invalid character '\x1b' in string literal`，多为 config 中混入了终端颜色码，当前版本已修复（SNI 等提示统一输出到 stderr，写入 JSON 前会过滤控制字符）。若仍出现，可执行 `bash install.sh reality` 重新生成配置。
+
+`Special user nobody configured, this is not safe!` 为 systemd 提示，可忽略，不影响运行；若需消除可编辑 `/etc/systemd/system/xray.service` 将 `User=nobody` 改为 `User=root` 后 `systemctl daemon-reload && systemctl restart xray`。
+
 ```bash
 # 查看详细日志
 journalctl -u xray -n 50 --no-pager

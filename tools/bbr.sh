@@ -36,3 +36,4 @@ if echo "$AVAILABLE" | grep -q bbr; then
 else
     echo "当前内核不支持 BBR，请升级内核"
 fi
+[[ -f /usr/local/etc/xray-reality/common_commands.sh ]] && source /usr/local/etc/xray-reality/common_commands.sh && show_common_commands

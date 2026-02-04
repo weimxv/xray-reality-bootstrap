@@ -31,3 +31,4 @@ EOF
 
 echo ""
 echo "[OK] 已保存。运行 xinfo 可查看带新别名的分享链接。"
+[[ -f /usr/local/etc/xray-reality/common_commands.sh ]] && source /usr/local/etc/xray-reality/common_commands.sh && show_common_commands

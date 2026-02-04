@@ -49,6 +49,10 @@ case "$choice" in
         echo "  systemctl restart sshd"
         echo "  # 并确保防火墙已放行新 SSH 端口后再断开当前连接"
         ;;
-    0) exit 0 ;;
+    0)
+        [[ -f /usr/local/etc/xray-reality/common_commands.sh ]] && source /usr/local/etc/xray-reality/common_commands.sh && show_common_commands
+        exit 0
+        ;;
     *) echo "无效输入"; exit 1 ;;
 esac
+[[ -f /usr/local/etc/xray-reality/common_commands.sh ]] && source /usr/local/etc/xray-reality/common_commands.sh && show_common_commands

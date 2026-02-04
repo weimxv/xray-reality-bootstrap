@@ -117,25 +117,21 @@ firewall_run() {
         fi
     "
 
-    # 6. Fail2ban（增强版）
+    # 6. Fail2ban（增强版：sshd 使用 systemd 后端，避免「找不到 log file」报错）
     if ui_confirm "是否启用 Fail2ban (SSH 防暴力破解)" 30 y; then
         spinner_run "配置 Fail2ban" bash -c "
             apt-get -y install fail2ban >/dev/null 2>&1 || true
-            cat >/etc/fail2ban/jail.local <<'EOFAIL'
+            cat >/etc/fail2ban/jail.local <<EOFAIL
 [DEFAULT]
 ignoreip = 127.0.0.1/8 ::1
 bantime = 1d
-bantime.increment = true
-bantime.factor = 1
-bantime.maxtime = 30d
 findtime = 7d
 maxretry = 3
-backend = auto
 
 [sshd]
 enabled = true
 port = $SSH_PORT
-mode = aggressive
+backend = systemd
 EOFAIL
             systemctl enable --now fail2ban
         "

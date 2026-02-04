@@ -37,7 +37,10 @@ case "$choice" in
     1) NEW_STRATEGY="dual_stack" ;;
     2) NEW_STRATEGY="ipv4_only" ;;
     3) NEW_STRATEGY="ipv6_only" ;;
-    0) echo "已取消"; exit 0 ;;
+    0)
+        [[ -f /usr/local/etc/xray-reality/common_commands.sh ]] && source /usr/local/etc/xray-reality/common_commands.sh && show_common_commands
+        echo "已取消"; exit 0
+        ;;
     *) echo "无效输入"; exit 1 ;;
 esac
 
@@ -58,3 +61,4 @@ systemctl restart xray
 echo "[OK] 已重启 Xray"
 echo ""
 echo "当前策略: $NEW_STRATEGY"
+[[ -f /usr/local/etc/xray-reality/common_commands.sh ]] && source /usr/local/etc/xray-reality/common_commands.sh && show_common_commands

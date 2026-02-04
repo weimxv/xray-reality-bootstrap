@@ -19,6 +19,7 @@ read -p "请输入新 SNI 域名 (直接回车保持不变): " new_sni
 new_sni=${new_sni:-$SNI}
 
 if [[ -z "$new_sni" ]]; then
+    [[ -f /usr/local/etc/xray-reality/common_commands.sh ]] && source /usr/local/etc/xray-reality/common_commands.sh && show_common_commands
     echo "未修改"; exit 0
 fi
 
@@ -30,3 +31,4 @@ jq --arg s "$new_sni" --arg d "$new_dest" \
 
 systemctl restart xray
 echo "[OK] SNI 已改为: $new_sni，Xray 已重启"
+[[ -f /usr/local/etc/xray-reality/common_commands.sh ]] && source /usr/local/etc/xray-reality/common_commands.sh && show_common_commands

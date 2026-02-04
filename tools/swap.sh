@@ -30,3 +30,4 @@ else
         fi
     fi
 fi
+[[ -f /usr/local/etc/xray-reality/common_commands.sh ]] && source /usr/local/etc/xray-reality/common_commands.sh && show_common_commands

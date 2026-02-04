@@ -36,9 +36,10 @@ fi
 echo "------------------------------------------"
 echo "1. 开启/关闭 BT 下载封禁"
 echo "2. 开启/关闭 私有 IP 封禁"
+echo "3. 同时开启/关闭 BT 与私有 IP 封禁"
 echo "0. 退出 (Exit)"
 echo "------------------------------------------"
-read -p "请输入选项 [0-2]: " choice
+read -p "请输入选项 [0-3]: " choice
 
 enable_bt_block() {
     # 常见 BT 端口与特征匹配（简单版）
@@ -99,7 +100,21 @@ case "$choice" in
             echo "[OK] 已开启 私有 IP 封禁"
         fi
         ;;
+    3)
+        if bt_block_enabled && lan_block_enabled; then
+            echo "正在同时关闭 BT 与私有 IP 封禁..."
+            disable_bt_block
+            disable_lan_block
+            echo "[OK] 已关闭 BT 与私有 IP 封禁"
+        else
+            echo "正在同时开启 BT 与私有 IP 封禁..."
+            enable_bt_block
+            enable_lan_block
+            echo "[OK] 已开启 BT 与私有 IP 封禁"
+        fi
+        ;;
     0)
+        [[ -f /usr/local/etc/xray-reality/common_commands.sh ]] && source /usr/local/etc/xray-reality/common_commands.sh && show_common_commands
         exit 0
         ;;
     *)
@@ -107,4 +122,6 @@ case "$choice" in
         exit 1
         ;;
 esac
+
+[[ -f /usr/local/etc/xray-reality/common_commands.sh ]] && source /usr/local/etc/xray-reality/common_commands.sh && show_common_commands
 

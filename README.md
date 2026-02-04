@@ -104,10 +104,7 @@ xray-reality-bootstrap/
 # 方式 A：有 curl 时（多数系统已预装）
 bash <(curl -fsSL https://raw.githubusercontent.com/weimxv/xray-reality-bootstrap/main/bootstrap.sh)
 
-# 方式 B：没有 curl 但有 wget 时
-bash <(wget -qO- https://raw.githubusercontent.com/weimxv/xray-reality-bootstrap/main/bootstrap.sh)
-
-# 方式 C：curl 和 wget 都没有时，先装 curl 再执行
+# 方式 B：curl 和 wget 都没有时，先装 curl 再执行
 apt update && apt install -y curl
 bash <(curl -fsSL https://raw.githubusercontent.com/weimxv/xray-reality-bootstrap/main/bootstrap.sh)
 ```
@@ -150,11 +147,12 @@ bash install.sh
 | **net** | 切换网络策略（双栈 / 仅 IPv4 / 仅 IPv6） |
 | **ports** | 查看或修改 SSH、Xray 端口 |
 | **sni** | 修改 SNI 伪装域名 |
-| **f2b** | Fail2ban 状态与配置路径 |
+| **f2b** | Fail2ban 状态与配置（SSH 防暴力破解） |
 | **bbr** | BBR 拥塞控制启用/禁用 |
 | **swap** | Swap 虚拟内存查看与创建 |
-| **bt** | BT/P2P 与私有 IP 封禁管理 |
+| **bt** | BT/P2P 与私有 IP 封禁管理（含「同时开启/关闭」选项） |
 | **name** | 节点别名（分享链接/客户端显示名，支持中文如 香港-V4） |
+| **log** | 实时查看 Xray 连接日志（`journalctl -u xray -f`） |
 
 ### `xinfo` - 查看节点信息
 
@@ -298,6 +296,10 @@ journalctl -u xray -n 50 --no-pager
 # 检查配置语法
 /usr/local/bin/xray run -test -config /usr/local/etc/xray/config.json
 ```
+
+### Fail2ban 启动失败（Have not found any log file for sshd jail）
+
+新安装时脚本已使用 `backend = systemd`，无需 log 文件。若为旧部署或手动安装，在 `/etc/fail2ban/jail.local` 的 `[sshd]` 段下添加一行 `backend = systemd`，然后执行 `systemctl restart fail2ban`。运行 `f2b` 可查看状态与提示。
 
 ### 无法连接节点
 

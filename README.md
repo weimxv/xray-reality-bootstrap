@@ -99,6 +99,9 @@ xray-reality-bootstrap/
 ### 一键部署
 
 ```bash
+# 首次使用需先安装 git（干净的 VPS 通常没有预装）
+apt update && apt install -y git
+
 # 克隆项目
 git clone https://github.com/weimxv/xray-reality-bootstrap.git
 cd xray-reality-bootstrap

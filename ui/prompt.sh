@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-source "$(dirname "$0")/color.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/color.sh"
 
 # --- 清理输入缓冲 ---
 _flush_stdin() {

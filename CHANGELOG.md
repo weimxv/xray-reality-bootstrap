@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.1] - 2024-02-04
+
+### 修复
+- 🐛 修复 ui 脚本中 `$0` 导致的路径解析错误（改用 `${BASH_SOURCE[0]}`）
+- 📝 在文档中添加 git 安装说明，避免新 VPS 部署失败
+
+### 改进
+- 📖 更新 README.md 和 QUICKSTART.md，增加前置依赖说明
+
+---
+
 ## [1.0.0] - 2024-02-04
 
 ### 新增功能

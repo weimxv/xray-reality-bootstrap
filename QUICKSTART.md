@@ -18,6 +18,20 @@ sudo su -
 sudo bash install.sh
 ```
 
+### 3. 安装必要工具
+
+**首次使用的干净 VPS 需要先安装 git：**
+
+```bash
+# Debian/Ubuntu 系统
+apt update && apt install -y git
+
+# CentOS/RHEL 系统
+yum install -y git
+```
+
+> 💡 **提示：** 如果不想使用 git，可以选择「方式二：直接下载」（见下方部署步骤）
+
 ---
 
 ## 🚀 部署步骤

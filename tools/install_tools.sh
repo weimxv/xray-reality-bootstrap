@@ -11,9 +11,15 @@ if [[ ! -f "$RUNTIME_DIR/xray.env" ]]; then
     exit 1
 fi
 
-# 写入 runtime 路径，供 net/ports 等子命令使用
+# 写入 runtime 路径与默认节点别名
 mkdir -p /usr/local/etc/xray-reality
 echo "RUNTIME_DIR=\"$RUNTIME_DIR\"" > /usr/local/etc/xray-reality/runtime_dir
+if [[ ! -f /usr/local/etc/xray-reality/node_alias ]]; then
+    cat > /usr/local/etc/xray-reality/node_alias <<'ALIASEOF'
+NODE_ALIAS_V4="xray-reality-v4"
+NODE_ALIAS_V6="xray-reality-v6"
+ALIASEOF
+fi
 
 source "$RUNTIME_DIR/xray.env"
 source "$RUNTIME_DIR/network.env" 2>/dev/null || true
@@ -43,8 +49,13 @@ PUB=$($BIN x25519 -i "$PRIV" 2>/dev/null | grep -oP 'Public key: \K.*')
 IPV4=$(curl -s4m 2 https://api.ipify.org 2>/dev/null || echo "N/A")
 IPV6=$(curl -s6m 2 https://api64.ipify.org 2>/dev/null || echo "N/A")
 
-LINK_V4="vless://${UUID}@${IPV4}:${PORT}?encryption=none&flow=xtls-rprx-vision&security=reality&sni=${SNI}&fp=chrome&pbk=${PUB}&sid=${SID}&type=tcp&headerType=none#xray-reality-v4"
-LINK_V6="vless://${UUID}@[${IPV6}]:${PORT}?encryption=none&flow=xtls-rprx-vision&security=reality&sni=${SNI}&fp=chrome&pbk=${PUB}&sid=${SID}&type=tcp&headerType=none#xray-reality-v6"
+ALIAS_FILE="/usr/local/etc/xray-reality/node_alias"
+NODE_ALIAS_V4="xray-reality-v4"
+NODE_ALIAS_V6="xray-reality-v6"
+[[ -f "$ALIAS_FILE" ]] && source "$ALIAS_FILE" 2>/dev/null || true
+
+LINK_V4="vless://${UUID}@${IPV4}:${PORT}?encryption=none&flow=xtls-rprx-vision&security=reality&sni=${SNI}&fp=chrome&pbk=${PUB}&sid=${SID}&type=tcp&headerType=none#${NODE_ALIAS_V4}"
+LINK_V6="vless://${UUID}@[${IPV6}]:${PORT}?encryption=none&flow=xtls-rprx-vision&security=reality&sni=${SNI}&fp=chrome&pbk=${PUB}&sid=${SID}&type=tcp&headerType=none#${NODE_ALIAS_V6}"
 
 clear
 echo "===================================="
@@ -90,7 +101,7 @@ chmod +x /usr/local/bin/xinfo
 # -------------------------------
 # 安装子命令: net, ports, sni, f2b, bbr, swap, bt
 # -------------------------------
-for cmd in net ports sni f2b bbr swap bt; do
+for cmd in net ports sni f2b bbr swap bt name; do
     if [[ -f "$BASE_DIR/tools/${cmd}.sh" ]]; then
         cp "$BASE_DIR/tools/${cmd}.sh" "/usr/local/bin/$cmd"
         chmod +x "/usr/local/bin/$cmd"
@@ -110,4 +121,5 @@ echo "  f2b    - Fail2ban 状态与配置"
 echo "  bbr    - BBR 拥塞控制开关"
 echo "  swap   - Swap 虚拟内存查看与创建"
 echo "  bt     - BT/P2P 与私有 IP 封禁管理"
+echo "  name   - 节点别名（分享链接/客户端显示名，支持中文如 香港-V4）"
 echo "=========================================="

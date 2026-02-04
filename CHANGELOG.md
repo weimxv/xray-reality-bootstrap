@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
   - `bbr` - BBR 拥塞控制开关
   - `swap` - Swap 查看与创建
   - `bt` - BT/P2P 与私有 IP 封禁管理
+  - `name` - 节点别名（分享链接 # 后名称，支持中文如 香港-V4）
 
 ### 修复
 - 🐛 **network.env 未生成**：修复网络模块写入 `runtime/network.env` 失败导致内核阶段报错的问题

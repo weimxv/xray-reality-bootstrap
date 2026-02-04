@@ -8,12 +8,16 @@ All notable changes to this project will be documented in this file.
 - 🐛 修复 ui 脚本中 `$0` 导致的路径解析错误（改用 `${BASH_SOURCE[0]}`）
 - 🐛 修复 `kernel.sh` 和 `firewall.sh` 在脚本加载时过早检查依赖文件的问题
 - 🐛 修复 `firewall.sh` 在 `system_run` 之前检查 iptables 导致的失败
+- 🐛 修复 IPv6 检测失败导致脚本退出的问题（仅 IPv4 环境现在可以正常部署）
+- 🐛 修复交互提示不显示的问题（使用 stderr 输出避免被命令替换捕获）
 - ✨ 重构交互逻辑：`ui_read_timeout` 现在支持回车确认，符合用户习惯
 - ✨ 改进部署确认：默认值为 `y`，直接回车或超时都会继续部署
 
 ### 改进
 - 📖 更新 README.md 和 QUICKSTART.md，增加前置依赖说明（git 安装）
 - 🎨 优化用户交互体验，避免"按键但不回车"的反直觉操作
+- ✨ 新增多阶段进度显示（`ui_phase`），清晰展示 [1/7]、[2/7] 等部署进度
+- ✨ 新增 `spinner_run_allow_fail` 函数，支持允许失败的操作（如网络检测）
 
 ---
 

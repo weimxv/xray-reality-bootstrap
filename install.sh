@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+set -e
+
+BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
+CORE_DIR="$BASE_DIR/core"
+TOOLS_DIR="$BASE_DIR/tools"
+RUNTIME_DIR="$BASE_DIR/runtime"
+
+mkdir -p "$RUNTIME_DIR"
+
+# ---------------- UI ----------------
+source "$BASE_DIR/ui/color.sh"
+source "$BASE_DIR/ui/banner.sh"
+
+# ---------------- Preflight ----------------
+source "$CORE_DIR/preflight.sh"
+
+# ---------------- Load Modules ----------------
+source "$CORE_DIR/system.sh"
+source "$CORE_DIR/network.sh"
+source "$CORE_DIR/kernel.sh"
+source "$CORE_DIR/firewall.sh"
+source "$CORE_DIR/xray.sh"
+source "$CORE_DIR/reality.sh"
+
+# ---------------- Commands ----------------
+cmd_install() {
+    print_banner
+    ui_warning
+
+    if ! ui_confirm "继续部署" 15; then
+        ui_warn "用户取消部署"
+        exit 0
+    fi
+
+    ui_step "阶段 1/6: 环境检查"
+    preflight_run
+
+    ui_step "阶段 2/6: 系统初始化"
+    system_run
+
+    ui_step "阶段 3/6: 网络检测"
+    network_run
+
+    ui_step "阶段 4/6: 内核优化"
+    kernel_run
+
+    ui_step "阶段 5/6: 安装 Xray Core"
+    xray_run
+
+    ui_step "阶段 6/6: Reality 配置"
+    reality_run
+
+    ui_step "阶段 7/6: 防火墙配置"
+    firewall_run
+
+    ui_step "安装管理工具"
+    bash "$TOOLS_DIR/install_tools.sh"
+
+    echo ""
+    ui_ok "=================================="
+    ui_ok " 部署完成！"
+    ui_ok "=================================="
+    ui_info "运行 'xinfo' 查看节点信息"
+    echo ""
+}
+
+cmd_info() {
+    if [[ -x /usr/local/bin/xinfo ]]; then
+        /usr/local/bin/xinfo
+    else
+        ui_err "工具未安装，请先运行: bash install.sh"
+        exit 1
+    fi
+}
+
+cmd_uninstall() {
+    ui_warn "即将卸载 Xray Reality（不会回滚系统配置）"
+    read -rp "确认继续？(y/n): " c
+    [[ "$c" =~ ^[yY]$ ]] || exit 0
+
+    systemctl stop xray 2>/dev/null || true
+    systemctl disable xray 2>/dev/null || true
+    rm -f /etc/systemd/system/xray.service
+    rm -rf /usr/local/etc/xray
+    rm -f /usr/local/bin/xray
+    rm -f /usr/local/bin/xinfo
+    rm -rf "$RUNTIME_DIR"
+
+    systemctl daemon-reload
+    ui_ok "Xray Reality 已卸载"
+}
+
+usage() {
+    cat <<EOF
+用法:
+  bash install.sh          - 全自动部署
+  bash install.sh info     - 查看节点信息
+  bash install.sh remove   - 卸载 Xray
+
+EOF
+    exit 1
+}
+
+# ---------------- Main ----------------
+case "${1:-install}" in
+    install)   cmd_install ;;
+    info)      cmd_info ;;
+    remove|uninstall) cmd_uninstall ;;
+    *)         usage ;;
+esac

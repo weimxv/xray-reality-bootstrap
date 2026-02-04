@@ -1,0 +1,23 @@
+# 运行时数据（包含敏感信息）
+runtime/
+
+# 日志文件
+*.log
+/tmp/
+
+# 备份文件
+*.bak
+*.backup
+*~
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# 测试文件
+test-*.sh

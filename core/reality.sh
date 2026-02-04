@@ -34,14 +34,26 @@ gen_keypair() {
     "$XRAY_BIN" x25519 2>/dev/null || true
 }
 
-# 从 x25519 输出解析私钥/公钥（兼容中英文及多行格式）
+# 去除行首的 "Private key:" / "PrivateKey:" / "Public key:" / "PublicKey:" 等前缀，只保留 base64
+_strip_key_prefix() {
+    echo "$1" | sed 's/^.*[Pp]rivate[Kk]ey:\s*//; s/^.*[Pp]ublic[Kk]ey:\s*//; s/^.*私钥:\s*//; s/^.*公钥:\s*//' | tr -d '\n\r '
+}
+
+# 从 x25519 输出解析私钥/公钥（兼容中英文、PrivateKey:/PublicKey: 无空格格式及多行格式）
 parse_keypair() {
     local keypair="$1"
     local priv=""
     local pub=""
-    # 英文: Private key: xxx / Public key: xxx
+    # 英文: Private key: xxx / Public key: xxx（有空格）
     priv=$(echo "$keypair" | sed -n 's/.*[Pp]rivate key:\s*//p' | tr -d '\n\r ')
     pub=$(echo "$keypair" | sed -n 's/.*[Pp]ublic key:\s*//p' | tr -d '\n\r ')
+    # 英文: PrivateKey: xxx / PublicKey: xxx（无空格，Xray 新版本）
+    if [[ -z "$priv" ]]; then
+        priv=$(echo "$keypair" | sed -n 's/.*[Pp]rivate[Kk]ey:\s*//p' | tr -d '\n\r ')
+    fi
+    if [[ -z "$pub" ]]; then
+        pub=$(echo "$keypair" | sed -n 's/.*[Pp]ublic[Kk]ey:\s*//p' | tr -d '\n\r ')
+    fi
     # 中文输出（私钥 / 公钥）
     if [[ -z "$priv" ]]; then
         priv=$(echo "$keypair" | sed -n 's/.*私钥:\s*//p' | tr -d '\n\r ')
@@ -49,11 +61,11 @@ parse_keypair() {
     if [[ -z "$pub" ]]; then
         pub=$(echo "$keypair" | sed -n 's/.*公钥:\s*//p' | tr -d '\n\r ')
     fi
-    # 退路：按行取，前一行私钥、后一行公钥（常见为两行 base64）
+    # 退路：按行取，并去掉可能的前缀（避免整行 "PrivateKey:xxx" 写入 config 导致 invalid privateKey）
     if [[ -z "$priv" || -z "$pub" ]]; then
         local line1 line2
-        line1=$(echo "$keypair" | sed -n '1p' | tr -d '\n\r ')
-        line2=$(echo "$keypair" | sed -n '2p' | tr -d '\n\r ')
+        line1=$(_strip_key_prefix "$(echo "$keypair" | sed -n '1p')")
+        line2=$(_strip_key_prefix "$(echo "$keypair" | sed -n '2p')")
         if [[ -n "$line1" && -n "$line2" && ${#line1} -gt 20 && ${#line2} -gt 20 ]]; then
             priv="${priv:-$line1}"
             pub="${pub:-$line2}"

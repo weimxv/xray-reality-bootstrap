@@ -96,17 +96,23 @@ xray-reality-bootstrap/
 | 权限 | root 用户 |
 | 网络 | 可访问 GitHub（IPv4 或 IPv6） |
 
-### 一键部署
+### 一键部署（推荐，无需预装 git）
+
+在新 VPS 上以 root 执行一条命令即可，脚本会自动安装所需依赖并完成部署：
 
 ```bash
-# 首次使用需先安装 git（干净的 VPS 通常没有预装）
-apt update && apt install -y git
+bash <(curl -fsSL https://raw.githubusercontent.com/weimxv/xray-reality-bootstrap/main/bootstrap.sh)
+```
 
-# 克隆项目
+安装目录：`/opt/xray-reality-bootstrap`，部署完成后可用 `xinfo` 查看节点信息。
+
+### 方式二：克隆后部署
+
+若已安装 git，也可克隆后本地执行：
+
+```bash
 git clone https://github.com/weimxv/xray-reality-bootstrap.git
 cd xray-reality-bootstrap
-
-# 执行部署
 bash install.sh
 ```
 
@@ -128,7 +134,18 @@ bash install.sh
 
 ## 📱 管理工具
 
-部署完成后，系统会自动安装管理命令：
+部署完成后，系统会自动安装以下命令（与 [Xray-Auto](https://github.com/ISFZY/Xray-Auto) 风格一致）：
+
+| 命令 | 功能 |
+|------|------|
+| **xinfo** | 查看节点信息、分享链接与二维码 |
+| **net** | 切换网络策略（双栈 / 仅 IPv4 / 仅 IPv6） |
+| **ports** | 查看或修改 SSH、Xray 端口 |
+| **sni** | 修改 SNI 伪装域名 |
+| **f2b** | Fail2ban 状态与配置路径 |
+| **bbr** | BBR 拥塞控制启用/禁用 |
+| **swap** | Swap 虚拟内存查看与创建 |
+| **bt** | BT/P2P & 私有 IP 封禁管理 |
 
 ### `xinfo` - 查看节点信息
 
@@ -136,26 +153,7 @@ bash install.sh
 xinfo
 ```
 
-**输出示例：**
-```
-====================================
- Xray Reality 节点信息
-====================================
-UUID       : de305d54-75b4-431b-adb2-eb6b9e546014
-端口        : 443
-SNI        : www.microsoft.com
-PublicKey  : B9s7Xg...
-ShortID    : a1b2c3d4
-------------------------------------
-IPv4 地址  : 1.2.3.4
-IPv6 地址  : 2001:db8::1
-====================================
-
-【IPv4 分享链接】
-vless://de305d54-...@1.2.3.4:443?...
-
-生成二维码? (y/n):
-```
+输出当前 UUID、端口、SNI、公钥、ShortID、IPv4/IPv6 地址及分享链接，可选生成二维码。
 
 ---
 

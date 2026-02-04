@@ -84,6 +84,7 @@ firewall_run() {
         source "$XRAY_ENV"
         [[ -n "$XRAY_PORT_VISION" ]] && XRAY_PORTS+=("$XRAY_PORT_VISION")
         [[ -n "$XRAY_PORT_XHTTP" ]] && XRAY_PORTS+=("$XRAY_PORT_XHTTP")
+        [[ -n "$XRAY_PORT" && ${#XRAY_PORTS[@]} -eq 0 ]] && XRAY_PORTS+=("$XRAY_PORT")
     fi
 
     if [[ "${#XRAY_PORTS[@]}" -gt 0 ]]; then

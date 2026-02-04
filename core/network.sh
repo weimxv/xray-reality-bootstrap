@@ -119,10 +119,14 @@ confirm_strategy() {
 # 写入 runtime 文件
 # -------------------------------
 persist_result() {
-    # 调试信息
-    ui_info "准备写入网络配置到: $RUNTIME_FILE"
-    
-    cat > "$RUNTIME_FILE" <<EOF
+    # 强制使用绝对路径，避免 source 环境下路径不一致
+    local abs_runtime_dir abs_runtime_file
+    abs_runtime_dir="$(cd "$RUNTIME_DIR" && pwd)"
+    abs_runtime_file="$abs_runtime_dir/network.env"
+
+    mkdir -p "$abs_runtime_dir"
+
+    cat > "$abs_runtime_file" <<EOF
 # 自动生成，请勿手动修改
 NET_TYPE=$NET_TYPE
 NET_STRATEGY=$NET_STRATEGY
@@ -130,11 +134,13 @@ HAS_IPV4=$HAS_IPV4
 HAS_IPV6=$HAS_IPV6
 EOF
 
-    # 验证文件是否创建成功
-    if [[ -f "$RUNTIME_FILE" ]]; then
+    # 同步落盘并验证
+    sync
+    if [[ -f "$abs_runtime_file" ]] && [[ -s "$abs_runtime_file" ]]; then
+        RUNTIME_FILE="$abs_runtime_file"
         ui_ok "网络信息已写入: $RUNTIME_FILE"
     else
-        ui_err "写入失败: $RUNTIME_FILE"
+        ui_err "写入失败: $abs_runtime_file"
         exit 1
     fi
 }

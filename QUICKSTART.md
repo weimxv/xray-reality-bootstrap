@@ -2,60 +2,40 @@
 
 ## 📋 前置准备
 
-### 1. 准备 VPS
-
 - **系统：** Debian 11/12 或 Ubuntu 20.04+
 - **内存：** 建议 ≥ 512MB
 - **网络：** 可访问 GitHub
-
-### 2. 获取 root 权限
-
-```bash
-# 切换到 root（如果是普通用户）
-sudo su -
-
-# 或者每条命令前加 sudo
-sudo bash install.sh
-```
-
-### 3. 安装必要工具
-
-**首次使用的干净 VPS 需要先安装 git：**
-
-```bash
-# Debian/Ubuntu 系统
-apt update && apt install -y git
-
-# CentOS/RHEL 系统
-yum install -y git
-```
-
-> 💡 **提示：** 如果不想使用 git，可以选择「方式二：直接下载」（见下方部署步骤）
+- **权限：** root 用户（`sudo su -` 或 `sudo bash ...`）
 
 ---
 
 ## 🚀 部署步骤
 
-### 方式一：克隆仓库（推荐）
+### 方式一：一条命令安装（推荐，无需 git）
+
+在新 VPS 上以 root 执行即可，脚本会自动安装 curl/unzip 等依赖并完成部署：
 
 ```bash
-# 1. 克隆项目
+bash <(curl -fsSL https://raw.githubusercontent.com/weimxv/xray-reality-bootstrap/main/bootstrap.sh)
+```
+
+安装目录：`/opt/xray-reality-bootstrap`。
+
+### 方式二：克隆仓库后安装
+
+```bash
+apt update && apt install -y git
 git clone https://github.com/weimxv/xray-reality-bootstrap.git
 cd xray-reality-bootstrap
-
-# 2. 执行部署
 bash install.sh
 ```
 
-### 方式二：直接下载
+### 方式三：下载压缩包后安装
 
 ```bash
-# 1. 下载压缩包
 wget https://github.com/weimxv/xray-reality-bootstrap/archive/refs/heads/main.zip
 unzip main.zip
 cd xray-reality-bootstrap-main
-
-# 2. 执行部署
 bash install.sh
 ```
 

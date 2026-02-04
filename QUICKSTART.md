@@ -26,7 +26,7 @@ sudo bash install.sh
 
 ```bash
 # 1. 克隆项目
-git clone https://github.com/yourusername/xray-reality-bootstrap.git
+git clone https://github.com/weimxv/xray-reality-bootstrap.git
 cd xray-reality-bootstrap
 
 # 2. 执行部署
@@ -37,7 +37,7 @@ bash install.sh
 
 ```bash
 # 1. 下载压缩包
-wget https://github.com/yourusername/xray-reality-bootstrap/archive/refs/heads/main.zip
+wget https://github.com/weimxv/xray-reality-bootstrap/archive/refs/heads/main.zip
 unzip main.zip
 cd xray-reality-bootstrap-main
 

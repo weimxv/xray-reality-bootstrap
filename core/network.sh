@@ -119,6 +119,9 @@ confirm_strategy() {
 # 写入 runtime 文件
 # -------------------------------
 persist_result() {
+    # 调试信息
+    ui_info "准备写入网络配置到: $RUNTIME_FILE"
+    
     cat > "$RUNTIME_FILE" <<EOF
 # 自动生成，请勿手动修改
 NET_TYPE=$NET_TYPE
@@ -127,7 +130,13 @@ HAS_IPV4=$HAS_IPV4
 HAS_IPV6=$HAS_IPV6
 EOF
 
-    ui_ok "网络信息已写入: runtime/network.env"
+    # 验证文件是否创建成功
+    if [[ -f "$RUNTIME_FILE" ]]; then
+        ui_ok "网络信息已写入: $RUNTIME_FILE"
+    else
+        ui_err "写入失败: $RUNTIME_FILE"
+        exit 1
+    fi
 }
 
 # -------------------------------

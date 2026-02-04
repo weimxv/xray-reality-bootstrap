@@ -35,8 +35,9 @@ detect_network() {
     HAS_IPV4=false
     HAS_IPV6=false
 
-    spinner_run "检测 IPv4 连通性" check_ipv4 && HAS_IPV4=true || true
-    spinner_run "检测 IPv6 连通性" check_ipv6 && HAS_IPV6=true || true
+    # 使用允许失败的 spinner，网络检测失败不应该退出
+    spinner_run_allow_fail "检测 IPv4 连通性" check_ipv4 && HAS_IPV4=true || true
+    spinner_run_allow_fail "检测 IPv6 连通性" check_ipv6 && HAS_IPV6=true || true
 
     if $HAS_IPV4 && $HAS_IPV6; then
         NET_TYPE="dual_stack"

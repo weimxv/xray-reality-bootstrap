@@ -36,28 +36,26 @@ cmd_install() {
     fi
     echo ""
 
-    ui_step "阶段 1/6: 环境检查"
+    ui_phase 1 7 "环境检查"
     preflight_run
 
-    ui_step "阶段 2/6: 系统初始化"
+    ui_phase 2 7 "系统初始化"
     system_run
 
-    ui_step "阶段 3/6: 网络检测"
+    ui_phase 3 7 "网络检测"
     network_run
 
-    ui_step "阶段 4/6: 内核优化"
+    ui_phase 4 7 "内核优化"
     kernel_run
 
-    ui_step "阶段 5/6: 安装 Xray Core"
+    ui_phase 5 7 "安装 Xray Core"
     xray_run
 
-    ui_step "阶段 6/6: Reality 配置"
+    ui_phase 6 7 "Reality 配置"
     reality_run
 
-    ui_step "阶段 7/6: 防火墙配置"
+    ui_phase 7 7 "防火墙配置与工具安装"
     firewall_run
-
-    ui_step "安装管理工具"
     bash "$TOOLS_DIR/install_tools.sh"
 
     echo ""

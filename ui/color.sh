@@ -23,3 +23,13 @@ ui_err()   { echo -e "${TAG_ERR} $*" >&2; }
 ui_warn()  { echo -e "${TAG_WARN} $*"; }
 ui_info()  { echo -e "${TAG_INFO} $*"; }
 ui_step()  { echo -e "${TAG_STEP} $*"; }
+
+# ========== 阶段进度显示 ==========
+ui_phase() {
+    local current="$1"
+    local total="$2"
+    local title="$3"
+    echo ""
+    echo -e "${BOLD}${BLUE}[${current}/${total}]${PLAIN} ${BOLD}${title}${PLAIN}"
+    echo -e "${GRAY}$(printf '━%.0s' {1..50})${PLAIN}"
+}

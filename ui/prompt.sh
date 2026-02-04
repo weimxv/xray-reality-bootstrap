@@ -13,21 +13,22 @@ ui_read_timeout() {
     local timeout="$3"
 
     _flush_stdin
-    local start=$(date +%s)
-    local end=$((start + timeout))
     local input=""
-
-    while true; do
-        local now=$(date +%s)
-        local remain=$((end - now))
-        [[ $remain -le 0 ]] && break
-
-        echo -ne "\r${YELLOW}${prompt} [默认: ${default}] [ ${RED}${remain}s${YELLOW} ] : ${PLAIN}"
-        read -t 1 -n 1 input && break
-    done
-
+    
+    # 显示提示并等待输入（支持回车确认）
+    echo -ne "${YELLOW}${prompt} [默认: ${default}] [ ${RED}${timeout}s${YELLOW} ] : ${PLAIN}"
+    
+    # 使用 read -t 等待整行输入
+    if read -t "$timeout" input; then
+        # 用户输入了内容（可能是 y/n 或直接回车）
+        input="${input:-$default}"
+    else
+        # 超时，使用默认值
+        input="$default"
+    fi
+    
     echo ""
-    echo "${input:-$default}"
+    echo "$input"
 }
 
 # --- 确认（返回值优化）---

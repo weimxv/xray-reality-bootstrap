@@ -28,11 +28,13 @@ cmd_install() {
     print_banner
     ui_warning
 
-    # 默认 15 秒内按 y 或直接回车都视为“继续”，按 n 或输入其他再回车为“取消”
-    if ! ui_confirm "继续部署（按 y 继续，n 取消）" 15 y; then
+    echo ""
+    # 默认 y：直接回车或超时都会继续，输入 n 才取消
+    if ! ui_confirm "是否继续部署" 15 y; then
         ui_warn "用户取消部署"
         exit 0
     fi
+    echo ""
 
     ui_step "阶段 1/6: 环境检查"
     preflight_run
